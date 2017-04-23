@@ -1,0 +1,235 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ...
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{diagbox}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{epstopdf}
+\usepackage{float}
+\usepackage[font={footnotesize}]{caption}
+\usepackage{slashbox}
+\usepackage{amsmath,amsfonts,amsthm,url,array,etoolbox}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage[titlenumbered,ruled]{algorithm2e}
+\usetikzlibrary{arrows,positioning,calc,decorations.markings}
+\theoremstyle{plain}
+\usepackage{titlesec}
+
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+\newtheorem{conj}{Conjecture}
+\newtheorem*{exmp*}{Example}%%no label here.
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+\newtheorem*{note}{Note}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\tikzset{
+    %Define standard arrow tip
+    >=stealth',
+    % Define arrow style
+    pil/.style={
+           ->,
+           thick}
+}
+\begin{document}
+
+
+\title{A Sparse Group Lasso multi-marker mixed model for Genome-Wide association studies}
+
+
+\author{Yingjie GUO, Chenxi WU\footnote{Max-Planck Institute of Mathematics, Vivatsgasse 7, 53111 Bonn, Germany, wuchenxi2013@gmail.com}, Ao LI, Xiaoyan LIU, Alon KEINAN, Maozu GUO}
+
+\maketitle
+
+
+\begin{abstract}
+
+
+
+\end{abstract}
+
+\section{Introduction}
+
+
+
+
+\section{Materials and Methods}
+
+\subsection{Genotypes and phenotypes}
+
+\subsection{}
+
+\subsection{Multivariate Linear mixed model}
+Our approach builds on linear mixed model, explaining the phenotype variability by a sum of individual genetic effects and random confounding effects. Suppose that $m$ individuals of a phenotype are collected, a linear mixed model in association mapping is typically expressed as
+
+\begin{equation}
+\label{eq:1}
+\bm{y} = \underbrace{\vphantom{\underbrace{\bm{Zu}}_\text{confounding}}\sum_{j=1}^n\beta_j\boldsymbol x_j}_\text{Fixed effect} + \underbrace{\underbrace{\bm{Zu}}_\text{confounding} + \underbrace{\bm{\Psi}}_\text{noise}}_\text{Random effect}
+\end{equation}
+
+Where $\bm{y}=(y_1,\ldots,y_m)$ is an $m\times1$ vector of observed phenotypes, and $\bm{X}=(\bm{x_1},\ldots,\bm{x_q})$ is an $m\times q$ matrix of fixed effects including SNPs and other confounding variables. $\bm\beta$ is a $q\times1$ vector representing coefficients of the fixed effects. $\bm Z$ is usually a designed matrix which gives group information of the samples. Here we treat each sample belongs to an unique group that $\bm Z$ turns out to be an identity matrix. $\bm{u}$ is the random effect of the mixed model with $Var(\bm{u})=\bm{\delta_g^2K}$. To account for confounding by population structure, family structure, and cryptic relatedness in GWAS, $\bm{K}$ can be reliably estimated from genetic markers, e.g., using the realized relationship matrix(RRM) which captures the overall genetic similarity between all pairs of samples.
+
+The resulting mixed model is typically applied in the context of single candidate SNP, that is, restricting the sum in Equation (\ref{eq:1}) to a particular SNP while ignoring all others. This independent analysis can be compromised by complex genetic architectures with some genetic factors masking others.
+
+As an alternative, we proposed an efficient approach to carry out joint inference in the model implied by Equation (\ref{eq:1}). Our approach assesses all the SNPs at the same time while accounting for their interdependencies and without making any assumptions on their ordering. To allow for applications to genome-wide SNP data, we place a XX prior over the fixed effects $\beta_j$, assigning zero-effect size to majority of SNPs via bi-level selection method that select non-zero effect SNPs both at the group level and within group level, which as done in the classical sparse group lasso.
+
+We call this approach SGL-LMM(Sparse Group Lasso-Linear Mixed Model), as it combines the advantages of established LMM with sparse group Lasso regression. The resulting model allows for dissecting the explained phenotype variance into individual SNP effects and effects caused by population structure.
+
+\subsubsection{Sparse Group Lasso - Linear Mixed Model}
+Let $\bm{X}\in{\rm I\!R}^{m \times q}$ denotes the matrix of fixed effects for $m$ individuals. This matrix includes the column of 1s corresponding to the offset, the covariances, and all the SNPs to be considered. We model the phenotype for $m$ individuals, $\bm{y}\in {\rm I\!R}^{m\times1}$ as the sum of fixed effects $\beta_j$ of SNPs $\bm{x_j}$ and random effect due to confounding influences $\bm{u}$ [see Equation (\ref{eq:1})]. The fixed effect terms are summed over genome-wide SNPs, where the great majority of SNPs have zero-effect size, that is, $\beta_j=0$, which is achieved by a XX prior on all weights. The random effect $\bm{u}$ is not observed directly. Instead, we assume that the distribution of $\bm{u}$ is Gaussian with covariance $\bm{K}$, $\bm{u}\sim \mathcal{N}(\bm{0},\,\sigma_g^2\bm{K})$.
+
+Assuming Gaussian noise, $\bm\psi\sim\mathcal{N}(\bm{0},\,\sigma_e^2\bm{I})$, and marginalizing over the random vector $\bm{u}$, we can write down the conditional posterior distribution over the weight vector $\bm\beta$:
+
+\begin{equation}
+\label{eq:2}
+p(\bm{\beta|y,X,K},\sigma_g^2,\sigma_e^2,\lambda)\propto
+\biggl(
+\underbrace{\mathcal{N}(\bm{y}|\sum_{j=1}^q\beta_j\bm{x_j},\,\sigma_g^2\bm{K}+\sigma_e^2\bm{I})}_{marginal likelihood}
+\underbrace{\vphantom{\sum_{j=1}^q}\pi(\bm{\beta})}_{prior}
+\biggr)
+\end{equation}
+
+With the prior of the form
+
+\begin{equation}
+\label{eq:3}
+\pi(\bm{\beta})\propto exp(-\lambda\sum_{G\in\mathcal{G}}(\alpha_{G}\parallel\bm\beta_G\parallel_2+\parallel\bm\beta_G\parallel_1))
+\end{equation}
+
+Here, suppose we are given $M$ (possibly overlapping) groups $\mathcal{G}=\{G_1,G_2,\ldots,G_M\}$, so that $G_i\subset \{1,2,\ldots,p\}\forall i$, of maximum size $B$. These groups contain sets of "similar" features, such as SNPs within a region of a gene. We assume that all but $k\ll M$ groups are identically zero. Among the active groups, we further assume that at most a fraction $\alpha \in (0,1)$ of the coefficients per group are non zero. $\alpha_G>0$ are constants that balance the tradeoff between the group norms and the $\ell_1$ norm. $\lambda$ denotes the sparsity hyperparameter of our prior, $\sigma_g^2$ is the magnitude of the random effect component, and $\sigma_e^2$ denotes the magnitude of the residual variance.
+
+\subsubsection{Parameter inference}
+Learning the hyperparameters $\mathcal{\theta}=\{\lambda,\,\sigma_g^2,\,\sigma_e^2\}$ and the weights $\bm\beta$ jointly is a hard non-convex optimization problems. Here, we propose a combinaton of fitting some of these parameters on the null model with the individual SNP effects excluded and reduction to a sparse overlapping group lasso problem.
+
+We first optimize $\sigma_g^2$,$\sigma_e^2$ by maximum likelihood under the null model, ignoring the effect of individual SNPs. The analogous procedure is widely used in single-SNP mixed models and has been shown to yield near-identical results to an exact approach.
+
+\textbf{\em Evaluation of the log likelihood} The log likelihood is parameterized by a weight vector $\bm\beta$ and the variances of the random components,  $\sigma_g^2$ and $\sigma_e^2$.
+
+\begin{equation}
+\label{eq:4}
+LL(\sigma_g^2,\sigma_e^2,\bm\beta)=log\mathcal{N}(\bm{y}|\bm{X\beta},\;\sigma_g^2\bm{K}+\sigma_e^2\bm{I})
+\end{equation}
+
+To speed up the computation needed, we introducing $\delta\equiv \frac{\sigma_e^2}{\sigma_g^2}$, the covariance matrix becomes $\sigma_g^2(\bm{K}+\delta{\bm{I}})$, and the likelihood becomes a function of $\bm\beta$,$\delta$ and $\sigma_g^2$:
+
+\begin{equation}
+\label{eq:5}
+LL(\delta,\sigma_g^2,\bm\beta)=log\mathcal{N}(\bm{y}|\bm{X\beta},\sigma_g^2(\bm{K}+\delta{\bm{I}}))
+\end{equation}
+
+Using the formula for the multivariate Normal distribution, we obtain
+
+\begin{equation}
+\label{eq:6}
+LL(\delta,\sigma_g^2,\bm\beta)=-\frac{1}{2}\Big(mlog(2\pi\sigma_g^2)+log(|\bm{K}+\delta{\bm{I}}|)+\frac{1}{\sigma_g^2}(\bm{y}-\bm{X\beta})^T(\bm{K}+\delta\bm{I})^{-1}(\bm{y}-\bm{X\beta})\Big)
+\end{equation}
+
+Since $\bm{K}$ is symmetric matrix, letting $\bm{USU}^T=\bm{K}$ be the spectral decomposition of $\bm{K}$, and noting that $\bm{I}=\bm{UU}^T$, Equation (\ref{eq:6}) becomes
+
+\begin{equation*}
+LL(\delta,\sigma_g^2,\bm\beta)=-\frac{1}{2}\Big(mlog(2\pi\sigma_g^2)+log((|USU^T+\delta\bm{UU}^T|))+\frac{1}{\sigma_g^2}(\bm{y}-\bm{X\beta})^T(USU^T+\delta\bm{UU}^T)^{-1}(\bm{y}-\bm{X\beta})\Big)
+\end{equation*}
+
+Next, we factor out $\bm{U}$ and $\bm{U}^T$ from the covariance of the Normal, so that it becomes the diagonal matrix $(\bm{S}+\delta{I})$, obtaining
+
+\begin{equation}
+\label{eq:7}
+-\frac{1}{2}\Big(mlog(2\pi\sigma_g^2)+log(|\bm{U}(\bm{S}+\delta\bm{I})\bm{U}^T|)+\frac{1}{\sigma_g^2}(\bm{y}-\bm{X\beta})^T(\bm{U}(\bm{S}+\delta\bm{I})\bm{U}^T|)^{-1}(\bm{y}-\bm{X\beta})\Big)
+\end{equation}
+
+The determinant of $|\bm{U}(\bm{S}+\delta{\bm{I}})\bm{U}^T|$ can be written as $|(\bm{S}+\delta{\bm{I}})|$ using the properties that $|\bm{AB}=|\bm{A}||\bm{B}||$, and that $|\bm{U}|=|\bm{U}^T|=1$. The inverse of this part can be rewritten as $\bm{U}(\bm{S}+\delta\bm{I})^{-1}\bm{U}^T$ using the properties that $(\bm{AB}^{-1})=\bm{B}^{-1}\bm{A}^{-1}$, that $\bm{U}^{-1}=\bm{U}^T$, and that $\bm{U}^{-T}=\bm{U}$. Thus, after additionally moving out $\bm{U}$ from the covariance term so that it now acts as a rotation matrix on the inputs $\bm{X}$ and targets $\bm{y}$, we obtain
+
+\begin{equation*}
+-\frac{1}{2}\Big(mlog(2\pi\sigma_g^2)+log(|\bm{U}||(\bm{S}+\delta\bm{I})||\bm{U}^T|)+\frac{1}{\sigma_g^2}(\bm{y}-\bm{X\beta})^T\bm{U}(\bm{S}+\delta{\bm{I}})^{-1}\bm{U}^T(\bm{y}-\bm{X\beta})\Big)
+\end{equation*}
+\begin{equation}
+\label{eq:8}
+-\frac{1}{2}\Big(mlog(2\pi\sigma_g^2)+log(|(\bm{S}+\delta\bm{I})|)+\frac{1}{\sigma_g^2}\big((\bm{U}^T\bm{y})-(\bm{U}^T\bm{X})\bm\beta\big)^T(\bm{S}+\delta{\bm{I}})^{-1}\big((\bm{U}^T\bm{y})-(\bm{U}^T\bm{X})\bm\beta\big)\Big)
+\end{equation}
+
+\textbf{\em Finding the maximum likelihood genetic variance with null model} We start by eliminating $\bm\beta$ from Equation (\ref{eq:8}), and set derivative with respect to $\sigma_g^2$ to zero. As the covariance matrix of the Normal distribution is now a diagonal matrix $(\bm{S}+\delta\bm{I})$, we could obtain
+
+\begin{equation*}
+0=-\frac{1}{2}\Bigg(\frac{n}{\hat{\sigma}_g^2}-\frac{1}{\hat{\sigma}_g^4}\sum_{i=1}^m\frac{([\bm{U}^T\bm{y}]_i)^2}{[\bm{S}]_{ii}+\delta} \Bigg)
+\end{equation*}
+
+Multipllllying both sides by $2\hat{\sigma}_g^4$ and solving for $\hat{\sigma}_g^2$, we get
+
+\begin{equation*}
+\hat{\sigma}_g^2=\frac{1}{n}\sum_{i=1}^m\frac{([\bm{U}^T\bm{y}]_i)^2}{[\bm{S}]_{ii}+\delta}
+\end{equation*}
+
+This equation can be evaluated in $\mathcal{O}(m)$.
+
+\textbf{\em Optimization of $\delta$} Plugging in $\hat{\sigma}_g^2$ into Equation(\ref{eq:8}) with null model, the log likelihood becomes a function only of $\delta$, $LL(\delta,\hat{\sigma}_g^2(\delta))=LL(\delta)$:
+
+\begin{equation*}
+LL(\delta)=-\frac{1}{2}\Bigg(nlog(2\pi)+\sum_{i=1}^mlog([\bm{S}]_{ii}+\delta)+n+nlog\frac{1}{n}\bigg(\sum_{i=1}^m\frac{([\bm{U}^T\bm{y}]_i)^2}{[\bm{S}]_{ii}+\delta}\bigg)\Bigg)
+\end{equation*}
+
+We optimize this function of $\delta$ using a one-dimensional numerical optimizer to fine the maximum likelihood value of $\delta$, from which the maximum likelihood values of all the parameters can be directly computed.
+
+\textbf{\em Reduction to sparse overlapping group lasso problem} Having fixed $\delta$, we use the spectral decomposition of $\bm{K}$ again to rotate our data such that the covariance matrix becomes isotropic
+
+\begin{equation}
+p()
+\end{equation}
+
+\subsection{Overview of geXGB}
+
+
+
+
+
+
+\subsection{Simulation study}
+
+
+
+\subsection{Competitive methods}
+
+
+\section{Results}
+
+\subsection{Results for the simulation study}
+
+
+\subsection{Real data sets analysis}
+
+
+\section{Discussion}
+
+
+
+\section{Conflict of interest}
+
+\section{Acknowledgements}
+
+\begin{thebibliography}{99}
+
+
+\end{thebibliography}
+
+
+
+\end{document}
