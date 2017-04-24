@@ -217,22 +217,13 @@ Here, $\bm{\tilde{X}}$ denotes the rotated and resealed genotypes, and $\bm{\til
 \end{aligned}
 \end{equation}
 
-The log likelihood is as follow:
+Where the log likelihood is as follow:
 
-\begin{equation*}
+\begin{equation}
 \begin{aligned}
-log\ \prod_{j=1}^mp(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)\}&=\sum_{j=1}^mlog\ p(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)\\
-&=\sum_{j=1}^mlog\ \Bigg(\frac{1}{(2\pi)^{1/2}|\Sigma|^{1/2}}exp\Big(-\frac{1}{2}(\bm{\tilde{y}_j}-\bm{\beta}^T\bm{\tilde{x}^j})^T\Sigma^{-1}(\bm{\tilde{y}_j}-\bm{\beta}^T\bm{\tilde{x}^j})\Big)\Bigg)
+log\ \prod_{j=1}^mp(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)\}&=\sum_{j=1}^mlog\ p(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)
 \end{aligned}
-\end{equation*} 
-
-Where $|\Sigma|^{1/2}=\sigma_g^m$, and $\Sigma^{-1}=\frac{1}{\sigma_g^2}\bm{I}$
-\begin{equation*}
-\begin{aligned}
-log\ \prod_{j=1}^mp(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)\}&=
-\end{aligned}
-\end{equation*} 
-
+\end{equation} 
 
 \subsection{Overview of geXGB}
 
