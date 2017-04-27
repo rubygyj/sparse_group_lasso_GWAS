@@ -213,19 +213,42 @@ Here, $\bm{\tilde{X}}$ denotes the rotated and resealed genotypes, and $\bm{\til
 \begin{aligned}
 \hat{\bm\beta}_{MAP}=\underset{\bm{\beta}}{\mathrm{argmax}}\ p(\bm{\beta}|\bm{\tilde{y}},\bm{\tilde{X}},\sigma_g^2)&= \underset{\bm{\beta}}{\mathrm{argmax}}p(\bm{\tilde{y}}|\bm{\beta},\bm{\tilde{X}},\sigma_g^2)\pi(\bm{\beta})\\
 &=\underset{\bm{\beta}}{\mathrm{argmax}}\ log\ p(\bm{\tilde{y}}|\bm{\beta},\bm{\tilde{X}},\sigma_g^2)\pi(\bm{\beta})\\
-&=\underset{\bm{\beta}}{\mathrm{argmax}}\ \{log\ \pi(\bm{\beta})+\ log\ \prod_{j=1}^mp(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)\}\\
+&=\underset{\bm{\beta}}{\mathrm{argmax}}\ \{log\ \pi(\bm{\beta})+\ log\ p(\bm{\tilde{y}}|\bm{\beta},\bm{\tilde{X}},\sigma_g^2)\}\\
 \end{aligned}
 \end{equation}
 
-Where the log likelihood is as follow:
+The log likelihood is as follow:
+
+\begin{equation*}
+\begin{aligned}
+log\ p(\bm{\tilde{y}}|\bm{\beta},\bm{\tilde{X}},\sigma_g^2)&=log\ \Bigg(\frac{1}{(2\pi)^{m/2}|\Sigma|^{1/2}}exp\Big(-\frac{1}{2}(\bm{\tilde{y}}-\bm{\tilde{X}\beta})^T\Sigma^{-1}(\bm{\tilde{y}}-\bm{\tilde{X}\beta})\Big)\Bigg)
+\end{aligned}
+\end{equation*}
+
+Where $|\Sigma|^{1/2}=\sigma_g^m$, and $\Sigma^{-1}=\frac{1}{\sigma_g^2}\bm{I}$
+\begin{equation*}
+\begin{aligned}
+log\ p(\bm{\tilde{y}}|\bm{\beta},\bm{\tilde{X}},\sigma_g^2)&=-\frac{1}{2}\Big(mlog\ (2\pi\sigma_g)+\frac{1}{\sigma_g^2}(\bm{\tilde{y}}-\bm{\tilde{X}\beta})^T(\bm{\tilde{y}}-\bm{\tilde{X}\beta})\Big)
+\end{aligned}
+\end{equation*}
+
+The final form of $\hat{\bm\beta}_{MAP}$ is
+\begin{equation}
+\label{eq:9}
+\hat{\bm\beta}_{MAP}=\underset{\bm{\beta}}{\mathrm{argmax}}\Big(-\frac{1}{\sigma_g^2}(\bm{\tilde{y}}-\bm{\tilde{X}\beta})^T(\bm{\tilde{y}}-\bm{\tilde{X}\beta})-\lambda\sum_{G\in\mathcal{G}}(\alpha_G\parallel\bm{\beta}_G\parallel_2+\parallel\bm{\beta}_G\parallel_1)\Big)
+\end{equation}
+
+Which is now equivalent to the sparse group lasso regression model, as maximizing the conditional posterior with respect to $\bm{\beta}$ is equivalent to minimizing the negative of Equation(\ref{eq:9}):
 
 \begin{equation}
-\begin{aligned}
-log\ \prod_{j=1}^mp(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)\}&=\sum_{j=1}^mlog\ p(\bm{\tilde{y}_j}|\bm{\beta},\bm{\tilde{x}}^j,\sigma_g^2)
-\end{aligned}
-\end{equation} 
+\underset{\bm{\beta}}{\mathrm{argmin}}\frac{1}{\sigma_g^2}\parallel\bm{\tilde{y}}-\bm{\tilde{X}\beta}\parallel+\lambda\sum_{G\in\mathcal{G}}(\alpha_G\parallel\bm{\beta}_G\parallel_2+\parallel\bm{\beta}_G\parallel_1)
+\end{equation}
 
-\subsection{Overview of geXGB}
+An appropriate setting of $\lambda$ and $\alpha_G$ can be found by cross-validation to maximize the overall predictive performance or stability selection.
+
+
+\subsubsection{Phenotype prediction}
+Given a trained SGL-Lasso model on a set of genotypes and phenotypes, we can predict the unobserved phenotype of test individuals. The predictive distribution can be derived by conditioning the joint distribution over all individuals on the training dataset, resulting in a Gaussian predictive distribution
 
 
 

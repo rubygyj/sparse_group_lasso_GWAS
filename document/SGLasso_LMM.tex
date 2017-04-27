@@ -241,14 +241,17 @@ The final form of $\hat{\bm\beta}_{MAP}$ is
 Which is now equivalent to the sparse group lasso regression model, as maximizing the conditional posterior with respect to $\bm{\beta}$ is equivalent to minimizing the negative of Equation(\ref{eq:9}):
 
 \begin{equation}
-\underset{\bm{\beta}}{\mathrm{argmin}\frac{1}{\sigma_g^2}\parallel\bm{\tilde{y}}-\bm{\tilde{X}\beta}}\parallel+\lambda\sum_{G\in\mathcal{G}}(\alpha_G\parallel\bm{\beta}_G\parallel_2+\parallel\bm{\beta}_G\parallel_1)
+\underset{\bm{\beta}}{\mathrm{argmin}}\frac{1}{\sigma_g^2}\parallel\bm{\tilde{y}}-\bm{\tilde{X}\beta}\parallel+\lambda\sum_{G\in\mathcal{G}}(\alpha_G\parallel\bm{\beta}_G\parallel_2+\parallel\bm{\beta}_G\parallel_1)
 \end{equation}
 
 An appropriate setting of $\lambda$ and $\alpha_G$ can be found by cross-validation to maximize the overall predictive performance or stability selection.
 
 
 \subsubsection{Phenotype prediction}
-Given a trained SGL-Lasso model on a set of genotypes and phenotypes, we can predict the unobserved phenotype of test individuals. The predictive distribution can be derived by conditioning the joint distribution over all individuals on the training dataset, resulting in a Gaussian predictive distribution 
+Given a trained SGL-Lasso model on a set of genotypes and phenotypes, we can predict the unobserved phenotype of test individuals. The predictive distribution can be derived by conditioning the joint distribution over all individuals on the training dataset, resulting in a Gaussian predictive distribution.
+
+Assume $\bm{y}\sim\mathcal{N}_y(\mu,\Sigma)$ where
+$\bm{y}=\big[\bm{y}_train\\\bm{y}_test\big]$
 
 
 
